@@ -129,8 +129,8 @@ static uint8_t sleepTicker = 0;
 typedef enum {rn2483, rn2903} RN_T;
 static RN_T rnModule = rn2483;
 
-// sendingCounter long
-static uint16_t sendingCounter = 0; // this counter will be included for all uplink messages
+
+static uint8_t sendingCounter = 0; // this counter will be included for all uplink messages
 
 void moduleResync(void)
 {
@@ -595,7 +595,7 @@ static MOTE_RUNNING_T moteRunningProcess(bool changeStates, bool selectButton, b
                 else if (randomPortNum > 223)
                     randomPortNum = randomPortNum - 50;
                 oled_putUint8(randomPortNum,12,1);
-                moteApp_add8bToDataBuffer(randomPortNum, 0);
+                moteApp_add8bToDataBuffer(1, 0);
                 dataBuffer[3] = 0x20;
                 // Prepare DataBuffer for Tx
                 light = 0;
@@ -604,14 +604,14 @@ static MOTE_RUNNING_T moteRunningProcess(bool changeStates, bool selectButton, b
                 moteApp_setSensorsInput();
                 moteApp_delayms(500);
                 uint8_t sizeOfUpdate = 0;
-                light = moteApp_convertSensorValue(moteApp_getLightValue());
+                light = 0;
                 //sizeOfUpdate = moteApp_addToDataBuffer(moteApp_getLightValue(), 4);
                 moteApp_add16bToDataBuffer(light, 4);
                 NOP();
                 NOP();
                 temperature = moteApp_convertSensorValue(moteApp_getTempValue());
                 temperature = ADC_TempConversion(temperature); 
-                moteApp_add8bToDataBuffer(temperature, 9); // 1 volt
+                moteApp_add8bToDataBuffer(0, 9); // 1 volt
                 NOP();
                 // Change State
                 runningState = runningUplinkSelect;
@@ -625,18 +625,11 @@ static MOTE_RUNNING_T moteRunningProcess(bool changeStates, bool selectButton, b
             }
             if (selectButton)
             {
-                // send a burst of five uplink messages
-                uint8_t ctr;
-                for( ctr = 1; ctr < 13; ctr = ctr + 1 ){
-                    dataBuffer[ctr] = 0x20;
-                }
-                /* for loop execution */
-                //moteApp_clearBuffers();
-                moteApp_add16bToDataBuffer(sendingCounter, 4);
-                
-                for( ctr = 0; ctr < 4; ctr = ctr + 1 ){
-                    //moteApp_add8bToDataBuffer(ctr, 9);
-                    moteApp_add8bToDataBuffer(ctr, 0);
+                //moteApp_add8bToDataBuffer(sendingCounter, 1);
+                uint8_t ctr2;
+                for( ctr2 = 0; ctr2 < 4; ctr2 = ctr2 + 1 ){
+                    
+                    moteApp_add8bToDataBuffer(sendingCounter, 5);
                     sendDataCommand("mac tx uncnf ", dataBuffer, 12);
                     
                     moteApp_delayms(4000);
