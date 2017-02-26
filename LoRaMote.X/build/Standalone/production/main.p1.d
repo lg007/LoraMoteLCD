@@ -1,0 +1,29 @@
+ build/Standalone/production/main.d  \
+ build/Standalone/production/main.p1:  \
+ main.c  \
+../Includes/MccGenerated/fvr.h  \
+../Includes/Usb/Framework/usb_device.h  \
+../Includes/Drivers/TMRapp.h  \
+../Includes/MccGenerated/mcc.h  \
+../Includes/Usb/Framework/usb_hal.h  \
+../Includes/MccGenerated/eusart.h  \
+../Includes/Board/USBapp.h  \
+../Includes/Drivers/SSD1306oLED.h  \
+../Includes/Usb/Framework/usb.h  \
+../Includes/MccGenerated/adc.h  \
+../Includes/Drivers/buttons.h  \
+../Includes/MccGenerated/tmr1.h  \
+../Includes/MccGenerated/tmr2.h  \
+../Includes/MccGenerated/tmr3.h  \
+../Includes/Board/HardwareProfile.h  \
+../Includes/Usb/Framework/usb_common.h  \
+../Includes/Usb/Framework/usb_device_cdc.h  \
+../Includes/MccGenerated/interrupt_manager.h  \
+../Includes/Board/MOTEapp.h  \
+../Includes/Usb/Framework/usb_ch9.h  \
+../Includes/MccGenerated/spi.h  \
+../Includes/MccGenerated/memory.h  \
+../Includes/Usb/usb_config.h  \
+../Includes/MccGenerated/cmp1.h  \
+../Includes/MccGenerated/pin_manager.h  \
+../Includes/Usb/Framework/usb_hal_pic18.h 
