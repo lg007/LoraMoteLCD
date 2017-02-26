@@ -130,7 +130,7 @@ typedef enum {rn2483, rn2903} RN_T;
 static RN_T rnModule = rn2483;
 
 // sendingCounter long
-static long sendingCounter = 0; // this counter will be included for all uplink messages
+static uint16_t sendingCounter = 0; // this counter will be included for all uplink messages
 
 void moduleResync(void)
 {
@@ -626,14 +626,19 @@ static MOTE_RUNNING_T moteRunningProcess(bool changeStates, bool selectButton, b
             if (selectButton)
             {
                 // send a burst of five uplink messages
-                int ctr;
-	
+                uint8_t ctr;
+                for( ctr = 1; ctr < 13; ctr = ctr + 1 ){
+                    dataBuffer[ctr] = 0x20;
+                }
                 /* for loop execution */
-                moteApp_clearBuffers();
-                moteApp_add16bToDataBuffer(sendingCounter, 3);
-                for( ctr = 0; ctr < 5; ctr = ctr + 1 ){
-                    moteApp_add8bToDataBuffer(ctr, 9);
+                //moteApp_clearBuffers();
+                moteApp_add16bToDataBuffer(sendingCounter, 4);
+                
+                for( ctr = 0; ctr < 4; ctr = ctr + 1 ){
+                    //moteApp_add8bToDataBuffer(ctr, 9);
+                    moteApp_add8bToDataBuffer(ctr, 0);
                     sendDataCommand("mac tx uncnf ", dataBuffer, 12);
+                    
                     moteApp_delayms(4000);
                 }
                 sendingCounter++;
