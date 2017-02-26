@@ -8306,12 +8306,15 @@ static uint8_t sleepTicker = 0;
 typedef enum {rn2483, rn2903} RN_T;
 static RN_T rnModule = rn2483;
 
+
+static long sendingCounter = 0;
+
 void moduleResync(void)
 {
 bool escapeEvent = 0;
 uint16_t escapeCounter = 0;
 
-# 143
+# 146
 TXSTAbits.TXEN = 0;
 LATCbits.LATC6 = 0;
 moteApp_delayms(10);
@@ -8752,9 +8755,9 @@ sleepTicker = 0;
 
 oled_clear();
 oled_putString("Uplink Pckt Type",0,0);
-oled_putString("Throu Port# ",0,1);
 
-oled_putString("(UNCNF)    (CNF) ",0,3);
+
+oled_putString("(UNCNF)   (Burst) ",0,3);
 
 moteApp_clearBuffers();
 randomPortNum = TMR2_ReadTimer();
@@ -8794,7 +8797,19 @@ sendDataCommand("mac tx uncnf ", dataBuffer, 12);
 }
 if (selectButton)
 {
-sendDataCommand("mac tx cnf ", dataBuffer, 12);
+
+int ctr;
+
+
+moteApp_clearBuffers();
+moteApp_add16bToDataBuffer(sendingCounter, 3);
+for( ctr = 0; ctr < 5; ctr = ctr + 1 ){
+moteApp_add8bToDataBuffer(ctr, 9);
+
+sendDataCommand("mac tx uncnf ", dataBuffer, 12);
+}
+sendingCounter++;
+
 }
 
 if ( (changeStates) || (selectButton) )
@@ -9404,7 +9419,7 @@ PEIE = 0;
 
 LATEbits.LATE2 = 0;
 
-# 1240
+# 1255
 LATBbits.LATB2 = 0;
 LATBbits.LATB3 = 0;
 LATBbits.LATB4 = 0;

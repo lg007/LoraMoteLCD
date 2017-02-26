@@ -6546,10 +6546,10 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;poweruptest.c: 93: oled_putString("Build Date/Time",0,1);
 "93
 [e ( _oled_putString (3 , , :s 4C -> -> 0 `i `uc -> -> 1 `i `uc ]
-[; ;poweruptest.c: 94: oled_putString("Dec 15 2016",0,2);
+[; ;poweruptest.c: 94: oled_putString("Feb 26 2017",0,2);
 "94
 [e ( _oled_putString (3 , , :s 5C -> -> 0 `i `uc -> -> 2 `i `uc ]
-[; ;poweruptest.c: 95: oled_putString("11:44:31",0,3);
+[; ;poweruptest.c: 95: oled_putString("18:03:15",0,3);
 "95
 [e ( _oled_putString (3 , , :s 6C -> -> 0 `i `uc -> -> 3 `i `uc ]
 [; ;poweruptest.c: 97: }
@@ -6887,8 +6887,8 @@ Version 3.2 HI-TECH Software Intermediate Code
 [a 12C 67 111 109 109 32 84 101 115 116 58 0 ]
 [a 17C 82 70 32 84 101 115 116 58 0 ]
 [a 13C 76 69 68 32 84 101 115 116 58 0 ]
-[a 5C 68 101 99 32 49 53 32 50 48 49 54 0 ]
-[a 6C 49 49 58 52 52 58 51 49 0 ]
+[a 5C 70 101 98 32 50 54 32 50 48 49 55 0 ]
+[a 6C 49 56 58 48 51 58 49 53 0 ]
 [a 3C 49 0 ]
 [a 2C 48 0 ]
 [a 1C 77 111 84 101 32 118 32 46 0 ]
