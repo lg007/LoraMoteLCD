@@ -633,8 +633,8 @@ static MOTE_RUNNING_T moteRunningProcess(bool changeStates, bool selectButton, b
                 moteApp_add16bToDataBuffer(sendingCounter, 3);
                 for( ctr = 0; ctr < 5; ctr = ctr + 1 ){
                     moteApp_add8bToDataBuffer(ctr, 9);
-                    
                     sendDataCommand("mac tx uncnf ", dataBuffer, 12);
+                    moteApp_delayms(4000);
                 }
                 sendingCounter++;
                 
