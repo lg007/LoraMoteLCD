@@ -40,6 +40,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <stddef.h>
+#include <stdio.h>
 // Application Includes
 #include "HardwareProfile.h"
 #include "pin_manager.h"
@@ -89,6 +90,8 @@ uint16_t moteApp_convertSensorValue(const char *);
 
 uint8_t* moteApp_getTempValue(void);
 uint8_t* moteApp_getLightValue(void);
+char * ultostr(unsigned long , char *, int); //lg
+void concat(char *, char *); // lg
 void moteApp_setSensorsInput(void);
 void MOTEapp_clearModuleResponse (void) ;
 
@@ -130,7 +133,8 @@ typedef enum {rn2483, rn2903} RN_T;
 static RN_T rnModule = rn2483;
 
 
-static uint8_t sendingCounter = 0; // this counter will be included for all uplink messages
+static unsigned long sendingCounter = 1; // this counter will be included for all uplink messages
+static uint8_t sendingCounterStr[10]; //lg
 
 void moduleResync(void)
 {
@@ -484,8 +488,10 @@ static MOTE_T moteJoiningProcess(bool messageReady, bool changeStates, bool sele
 
 static uint8_t dotCount = 0;
 static uint8_t dataBuffer[16];
+static uint8_t dataBuffer2[16]; //lg
 static uint8_t dataRatePosition = 0;
 static uint8_t dataRateSelection = 2;
+static uint8_t result[40]; //lg
 
 static MOTE_RUNNING_T moteRunningProcess(bool changeStates, bool selectButton, bool messageReady, bool sleepEvent)
 {
@@ -585,7 +591,7 @@ static MOTE_RUNNING_T moteRunningProcess(bool changeStates, bool selectButton, b
                 oled_putString("Uplink Pckt Type",0,0);
 //                oled_putString("Throu Port# ",0,1);
 //                oled_putString("Throu Port# ",0,1);
-                oled_putString("(UNCNF)   (Burst) ",0,3);
+                oled_putString("(UNCNF)  (BURST)",0,3);
                 // Prepare Buffers and data
                 moteApp_clearBuffers();
                 randomPortNum = TMR2_ReadTimer();
@@ -626,15 +632,24 @@ static MOTE_RUNNING_T moteRunningProcess(bool changeStates, bool selectButton, b
             if (selectButton)
             {
                 //moteApp_add8bToDataBuffer(sendingCounter, 1);
-                uint8_t ctr2;
-                for( ctr2 = 0; ctr2 < 4; ctr2 = ctr2 + 1 ){
+                long ctr2;
+                for( ctr2 = 1; ctr2 < 5; ctr2 = ctr2 + 1 ){
                     
-                    moteApp_add8bToDataBuffer(sendingCounter, 5);
-                    sendDataCommand("mac tx uncnf ", dataBuffer, 12);
+                    //moteApp_add8bToDataBuffer(sendingCounter, 1);
+                    //moteApp_add8bToDataBuffer(ctr2, 5);
+                    //sendDataCommand("mac tx uncnf ", dataBuffer2, 16);
                     
+                    sprintf (sendingCounterStr, "%lu" , sendingCounter*10+ ctr2 );
+                    
+                    concat("mac tx uncnf 99 ", sendingCounterStr);
+                    //concat("mac tx uncnf 99 ", "1234");
+                    sendCommand(result);
+                    //free(sCommand);
                     moteApp_delayms(4000);
+                    oled_putUint8(sendingCounter,0,1);
+                    oled_putUint8(ctr2,0,2);
                 }
-                sendingCounter++;
+                sendingCounter = sendingCounter + 1;
                 
             }
 
@@ -1385,6 +1400,12 @@ static void moteApp_clearBuffers(void)
     {
         dataBuffer[counter] = 0;
     }
+    //lg
+    for (uint8_t counter = 0; counter < sizeof(dataBuffer2); counter++)
+    {
+        dataBuffer2[counter] = 0x20;
+    }
+    dataBuffer2[sizeof(dataBuffer2)] = 0x00;
 }
 
 void moteApp_add8bToDataBuffer(uint8_t number, uint8_t bufferLocation)
@@ -1539,4 +1560,54 @@ uint8_t moteApp_lightStringSize (void)
 uint8_t* moteApp_getLightString(void)
 {   
     return &storedLight;
+}
+char * ultostr(unsigned long value, char *ptr, int base)
+{
+  unsigned long t = 0, res = 0;
+  unsigned long tmp = value;
+  int count = 0;
+
+  if (NULL == ptr)
+  {
+    return NULL;
+  }
+
+  if (tmp == 0)
+  {
+    count++;
+  }
+
+  while(tmp > 0)
+  {
+    tmp = tmp/base;
+    count++;
+  }
+
+  ptr += count;
+
+  *ptr = '\0';
+
+  do
+  {
+    res = value - base * (t = value / base);
+    if (res < 10)
+    {
+      * -- ptr = '0' + res;
+    }
+    else if ((res >= 10) && (res < 16))
+    {
+        * --ptr = 'A' - 10 + res;
+    }
+  } while ((value = t) != 0);
+
+  return(ptr);
+}
+void concat(char *s1, char *s2)
+{
+    
+    //char *result = (malloc(strlen(s1)+strlen(s2)+1);//+1 for the zero-terminator
+    //in real code you would check for errors in malloc here
+    strcpy(result, s1);
+    strcat(result, s2);
+    return ;
 }
